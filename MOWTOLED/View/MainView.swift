@@ -23,10 +23,8 @@ struct MainView: View {
                     .listRowBackground(Color.clear)
                     .background(Color.white)
                     .cornerRadius(12)
-                    
-                    
-                    
                 }
+                .navigationTitle("Все билеты")
                 .navigationBarBackButtonHidden(true)
                 .navigationBarHidden(true)
                     .onAppear{ loadResults()}
@@ -55,9 +53,7 @@ struct MainView: View {
             HStack { // бейдик самый дешовый
                 if cheapestTiketID == result.id {
                     Text("Самый дешёвый")
-                        .font(
-                            Font.custom("SF Pro Text", size: 13)
-                                .weight(.semibold))
+                        .font(Font.custom("SF Pro Text", size: 13).weight(.semibold))
                         .multilineTextAlignment(.leading)
                         .foregroundColor(.white)
                         .padding(.horizontal, 8)
@@ -69,29 +65,34 @@ struct MainView: View {
                 }
             }
 
-            HStack { // цена, лого авия комании
-                
-                Text("\(result.price.value) ₽")
-                    .font( Font.custom("SF Pro Text", size: 19).weight(.semibold))
-                    .foregroundColor(Color(red: 0.05, green: 0.45, blue: 1))
-                    .frame(maxWidth: .infinity, minHeight: 23, maxHeight: 23, alignment: .topLeading)
-                
-                Group {
-                    if result.airline == "Аэрофлот" {
-                        Image("AeroflotOnDarkFalse")
-                    } else if result.airline == "Победа" {
-                        Image("PobedaOnDarkFalse")
-                    } else if result.airline == "Smartavia" {
-                        Image("SmartAvOnDarkFalse")
-                    } else if result.airline == "S7" {
-                        Image("S7OnDarkFalse")
+            if #available(iOS 15.0, *) {
+                HStack { // цена, лого авия комании
+                    
+                    Text("\(formatNumber(result.price.value)) ₽")
+                        .font( Font.custom("SF Pro Text", size: 19).weight(.semibold))
+                        .foregroundColor(Color(red: 0.05, green: 0.45, blue: 1))
+                        .frame(maxWidth: .infinity, minHeight: 23, maxHeight: 23, alignment: .topLeading)
+                    
+                    Group {
+                        if result.airline == "Аэрофлот" {
+                            Image("AeroflotOnDarkFalse")
+                        } else if result.airline == "Победа" {
+                            Image("PobedaOnDarkFalse")
+                        } else if result.airline == "Smartavia" {
+                            Image("SmartAvOnDarkFalse")
+                        } else if result.airline == "S7" {
+                            Image("S7OnDarkFalse")
+                        }
                     }
-                }
-                .padding(.bottom, 10)
-                .frame(width: 26, height: 26, alignment: .trailing)
-                
-                
-            } .padding(10)
+                    .padding(.bottom, 10)
+                    .frame(width: 26, height: 26, alignment: .trailing)
+                    
+                    
+                } .padding(10)
+                    .listRowSeparator(.hidden)
+            } else {
+                // Fallback on earlier versions
+            }
             
             
             HStack { // осталось билетов
@@ -152,10 +153,8 @@ struct MainView: View {
             
         }
         .font(.title)
-        
         .padding()
         .cornerRadius(12)
-        
         
         
     }
@@ -192,6 +191,11 @@ func convertDate(_ dateString: String) -> String {
         return "Invalid Date"
     }
 }
+func formatNumber(_ number: Int) -> String {
+        let numberFormatter = NumberFormatter()
+        numberFormatter.numberStyle = .none
+        return numberFormatter.string(from: NSNumber(value: number)) ?? ""
+    }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
