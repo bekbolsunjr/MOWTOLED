@@ -3,11 +3,38 @@ import SwiftUI
 
 
 struct MainView: View {
-    
-    
-    
-    @State var results: [Result] = []
+    @State var results: [Tiket] = []
     @State var cheapestTiketID: String
+    
+    
+    var body: some View {
+        
+        NavigationView {
+            VStack{
+                CustomNavigationTitle()
+                
+                List(results, id: \.id) { result in
+                    NavigationLink(destination: DetailView(result: result)){
+                        cell(result: result)
+                    }
+                    
+                    .listStyle(InsetListStyle())
+                    .listRowInsets(EdgeInsets(top: 5, leading: 0, bottom: 15, trailing: 0))
+                    .listRowBackground(Color.clear)
+                    .background(Color.white)
+                    .cornerRadius(12)
+                    
+                    
+                    
+                }
+                .navigationBarBackButtonHidden(true)
+                .navigationBarHidden(true)
+                    .onAppear{ loadResults()}
+                
+            }
+        }
+        
+    }
     
     func loadResults() {
         APIManager.shared.getTiket { results in
@@ -17,39 +44,15 @@ struct MainView: View {
     }
     
     
-    var body: some View {
-        
-        
-        // MARK: Main View
-        NavigationView {
-            List(results, id: \.id) { result in
-                NavigationLink(destination: DetailView(result: result)){
-                    cell(result: result)
-                }
-                
-                
-                
-            }.navigationTitle("Москва - Санкт-Питербукрг")
-                .navigationBarTitleDisplayMode(.inline)
-                .listRowBackground(Color.clear)
-            //                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 110, trailing: 0))
-                .listRowSeparator(.hidden)
-                .onAppear{
-                    loadResults()
-                }
-            
-        }
-        
-    }
     
     
+    @ViewBuilder
     
-    
-    
-    func cell(result: Result) -> some View {
+    func cell(result: Tiket) -> some View {
         
         VStack(alignment: .leading){
-            HStack { // самый дешовый
+            
+            HStack { // бейдик самый дешовый
                 if cheapestTiketID == result.id {
                     Text("Самый дешёвый")
                         .font(
@@ -62,64 +65,53 @@ struct MainView: View {
                         .frame(height: 20, alignment: .leading)
                         .background(Color(red: 0.21, green: 0.78, blue: 0.41))
                         .cornerRadius(100)
+                    
                 }
             }
-            
-            
-            
-            HStack { // цена, лого
+
+            HStack { // цена, лого авия комании
+                
                 Text("\(result.price.value) ₽")
-                    .font(
-                        Font.custom("SF Pro Text", size: 19)
-                            .weight(.semibold)
-                    )
+                    .font( Font.custom("SF Pro Text", size: 19).weight(.semibold))
                     .foregroundColor(Color(red: 0.05, green: 0.45, blue: 1))
                     .frame(maxWidth: .infinity, minHeight: 23, maxHeight: 23, alignment: .topLeading)
                 
-                HStack(alignment: .center, spacing: 0) {
+                Group {
                     if result.airline == "Аэрофлот" {
                         Image("AeroflotOnDarkFalse")
-                    }
-                    if result.airline == "Победа" {
+                    } else if result.airline == "Победа" {
                         Image("PobedaOnDarkFalse")
-                    }
-                    if result.airline == "Smartavia" {
+                    } else if result.airline == "Smartavia" {
                         Image("SmartAvOnDarkFalse")
-                    }
-                    if result.airline == "S7" {
+                    } else if result.airline == "S7" {
                         Image("S7OnDarkFalse")
                     }
-                    
                 }
                 .padding(.bottom, 10)
                 .frame(width: 26, height: 26, alignment: .trailing)
                 
-            }
+                
+            } .padding(10)
             
-            HStack { // осталось
+            
+            HStack { // осталось билетов
                 
                 if result.availableTicketsCount <= 10 {
                     Text("Осталось \(result.availableTicketsCount) билетов по этой цене")
                         .font(Font.custom("SF Pro Text", size: 13))
                         .foregroundColor(Color(red: 0.87, green: 0.26, blue: 0.31))
-                        .frame(maxWidth: .infinity, minHeight: 16, maxHeight: 16, alignment: .topLeading)
+                        .frame(maxWidth: .infinity, minHeight: 0, maxHeight: 16, alignment: .topLeading)
                 }
             }
             
             HStack { // От куда? , время
                 Text("Москва")
-                    .font(
-                        Font.custom("SF Pro Text", size: 15)
-                            .weight(.semibold)
-                    )
+                    .font(Font.custom("SF Pro Text", size: 15).weight(.semibold))
                     .foregroundColor(Color(red: 0.05, green: 0.07, blue: 0.11))
                     .frame(maxWidth: .infinity, minHeight: 18, maxHeight: 18, alignment: .topLeading)
                 
-                Text(formatTime("\(result.arrivalDateTime)")) //Время вылета
-                    .font(
-                        Font.custom("SF Pro Text", size: 15)
-                            .weight(.semibold)
-                    )
+                Text(formatTime("\(result.arrivalDateTime)")) // Время вылета
+                    .font(Font.custom("SF Pro Text", size: 15).weight(.semibold))
                     .multilineTextAlignment(.trailing)
                     .foregroundColor(Color(red: 0.05, green: 0.07, blue: 0.11))
                     .frame(maxWidth: .infinity, minHeight: 18, maxHeight: 18, alignment: .topTrailing)
@@ -129,25 +121,19 @@ struct MainView: View {
                     .font(Font.custom("SF Pro Text", size: 13))
                     .foregroundColor(Color(red: 0.35, green: 0.39, blue: 0.45))
                     .frame(maxWidth: .infinity, minHeight: 16, maxHeight: 16, alignment: .topLeading)
-                Text(convertDate("\(result.arrivalDateTime)"))
+                Text(convertDate("\(result.arrivalDateTime)")) // дата вылета
                     .font(Font.custom("SF Pro Text", size: 13))
                     .multilineTextAlignment(.trailing)
                     .foregroundColor(Color(red: 0.35, green: 0.39, blue: 0.45))
             }
             HStack {
                 Text("Санкт-Петербург")
-                    .font(
-                        Font.custom("SF Pro Text", size: 15)
-                            .weight(.semibold)
-                    )
+                    .font(Font.custom("SF Pro Text", size: 15).weight(.semibold))
                     .foregroundColor(Color(red: 0.05, green: 0.07, blue: 0.11))
                     .frame(maxWidth: .infinity, minHeight: 18, maxHeight: 18, alignment: .topLeading)
                 
                 Text(formatTime("\(result.arrivalDateTime)"))
-                    .font(
-                        Font.custom("SF Pro Text", size: 15)
-                            .weight(.semibold)
-                    )
+                    .font(Font.custom("SF Pro Text", size: 15).weight(.semibold))
                     .multilineTextAlignment(.trailing)
                     .foregroundColor(Color(red: 0.05, green: 0.07, blue: 0.11))
                     .frame(width: 65, height: 18, alignment: .topTrailing)
@@ -166,16 +152,13 @@ struct MainView: View {
             
         }
         .font(.title)
-        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 110, trailing: 0))
-        //.padding()
-        .background(Color.white)
+        
+        .padding()
         .cornerRadius(12)
         
+        
+        
     }
-    
-    
-    
-    
 }
 
 

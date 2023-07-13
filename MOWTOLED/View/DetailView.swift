@@ -2,7 +2,7 @@ import SwiftUI
 
 struct DetailView: View {
     
-    @State var result: Result
+    @State var result: Tiket
     @State private var showAlert = false
     
     var body: some View {

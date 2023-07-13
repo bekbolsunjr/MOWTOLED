@@ -10,7 +10,7 @@ import Foundation
 struct TiketData: Codable {
     let passengersCount: Int
     let origin, destination: Destination
-    let results: [Result]
+    let results: [Tiket]
 
     enum CodingKeys: String, CodingKey {
         case passengersCount = "passengers_count"
@@ -22,7 +22,7 @@ struct Destination: Codable {
     let iata, name: String
 }
 
-struct Result: Codable, Identifiable {
+struct Tiket: Codable, Identifiable {
     let id, departureDateTime, arrivalDateTime: String
     let price: Price
     let airline: String

@@ -12,7 +12,7 @@ class APIManager {
     
     let urlString = "https://nu.vsepoka.ru/api/search?origin=MOW&destination=LED"
     
-    func getTiket(completion: @escaping ([Result]) -> Void) {
+    func getTiket(completion: @escaping ([Tiket]) -> Void) {
         let url = URL(string: urlString)!
         let request = URLRequest(url: url)
         
