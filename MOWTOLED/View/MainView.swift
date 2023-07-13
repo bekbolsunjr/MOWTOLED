@@ -5,6 +5,7 @@ import SwiftUI
 struct MainView: View {
     @State var results: [Tiket] = []
     @State var cheapestTiketID: String
+    @State var isLoading = false
     
     
     var body: some View {
@@ -12,7 +13,7 @@ struct MainView: View {
         NavigationView {
             VStack{
                 CustomNavigationTitle()
-                
+
                 List(results, id: \.id) { result in
                     NavigationLink(destination: DetailView(result: result)){
                         cell(result: result)
@@ -27,12 +28,18 @@ struct MainView: View {
                 .navigationTitle("Все билеты")
                 .navigationBarBackButtonHidden(true)
                 .navigationBarHidden(true)
-                    .onAppear{ loadResults()}
+                .onAppear{ loadResults(); startFaceNetworkCall()}
+                
+                if isLoading {
+                    LoadingView()
+                }
                 
             }
+
         }
-        
+
     }
+    
     
     func loadResults() {
         APIManager.shared.getTiket { results in
@@ -158,6 +165,13 @@ struct MainView: View {
         
         
     }
+    
+    func startFaceNetworkCall(){
+        isLoading = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            isLoading = false
+        }
+    }
 }
 
 
@@ -197,9 +211,24 @@ func formatNumber(_ number: Int) -> String {
         return numberFormatter.string(from: NSNumber(value: number)) ?? ""
     }
 
+
+
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         MainView(results: [], cheapestTiketID: "")
     }
 }
 
+
+struct LoadingView: View {
+    var body: some View {
+        ZStack(alignment: .center){
+            Color(.systemBackground)
+                .ignoresSafeArea()
+                .opacity(0.5)
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: .blue))
+                .scaleEffect(3)
+        }
+    }
+}

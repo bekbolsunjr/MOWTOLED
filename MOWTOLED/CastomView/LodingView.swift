@@ -8,16 +8,16 @@
 import Foundation
 import SwiftUI
 
-struct LoadingView: UIViewRepresentable {
+struct LoadingView1: UIViewRepresentable {
 
     @Binding var isAnimating: Bool
     let style: UIActivityIndicatorView.Style
 
-    func makeUIView(context: UIViewRepresentableContext<LoadingView>) -> UIActivityIndicatorView {
+    func makeUIView(context: UIViewRepresentableContext<LoadingView1>) -> UIActivityIndicatorView {
         return UIActivityIndicatorView(style: style)
     }
 
-    func updateUIView(_ uiView: UIActivityIndicatorView, context: UIViewRepresentableContext<LoadingView>) {
+    func updateUIView(_ uiView: UIActivityIndicatorView, context: UIViewRepresentableContext<LoadingView1>) {
         isAnimating ? uiView.startAnimating() : uiView.stopAnimating()
     }
 }

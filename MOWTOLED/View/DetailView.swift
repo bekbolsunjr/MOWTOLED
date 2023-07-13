@@ -151,7 +151,7 @@ struct DetailView: View {
                 .padding(.horizontal, 16)
                 .alert(isPresented: $showAlert) {
                     Alert(
-                        title: Text("Билет куплен за \(formatNumber(result.price.value))")
+                        title: Text("Билет куплен за \(formatNumber(result.price.value)) ₽")
                             .font(Font.custom("SF Pro Text", size: 17).weight(.semibold)),
                         
                         dismissButton: .default(Text("Отлично"))
